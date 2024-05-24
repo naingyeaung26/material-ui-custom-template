@@ -46,6 +46,7 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+import BaseService from "api/BaseService";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -84,8 +85,19 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }, [dispatch, location]);
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
+  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route, hidden, roles }) => {
+    const user = BaseService.getSelectedUser();
     let returnValue;
+
+    if (hidden) {
+      return <></>;
+    }
+
+    if (user != null) {
+      if (!roles.includes(user.role)) {
+        return <></>;
+      }
+    }
 
     if (type === "collapse") {
       returnValue = href ? (

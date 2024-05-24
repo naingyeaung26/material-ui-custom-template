@@ -26,15 +26,26 @@ import MDBox from "components/MDBox";
 
 // Material Dashboard 2 React context
 import { useMaterialUIController, setLayout } from "context";
+import BaseService from "api/BaseService";
 
 function DashboardLayout({ children }) {
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav } = controller;
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLayout(dispatch, "dashboard");
+    redirectToLogin();
   }, [pathname]);
+
+  const redirectToLogin = () => {
+    const user = BaseService.getLoginUser();
+    if (user == null) {
+      BaseService.clearCookie();
+      navigate("/auth/signin");
+    }
+  }
 
   return (
     <MDBox
